@@ -1,0 +1,60 @@
+html, body {
+    background: #1e1e1e;
+    color: #999999;
+    line-height: 1.8em;
+    font-size: 1.2em;
+    font-family: sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+.container {
+    padding: 1em;
+    width: 100%;
+}
+
+@media screen and (min-width: 1280px) {
+    .container {
+        width: 1170px;
+        margin: 0 auto;
+    }
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    padding: 0;
+}
+
+pre, footer {
+    font-family: monospace, monospace;
+    font-size: 1.0em;
+    padding: 1em;
+    background: #181818;
+    border: 1px solid #232323;
+    box-shadow: inset -35px -35px 65px #3858b10f;
+    transition: all 0.2s;
+}
+
+pre:hover, footer:hover {
+    box-shadow: inset -35px -35px 65px #7738b12f;
+}
+
+a {
+    color: #3858b1;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+a:hover {
+    color: #7738b1;
+}
+
+footer {
+    padding: 0;
+    width: 100%;
+    margin: 0 auto;
+}

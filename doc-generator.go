@@ -87,18 +87,27 @@ func main() {
 
 	// Build
 	footer, _ := os.ReadFile("./template/footer.html")
+	normalize, _ := os.ReadFile("./template/normalize.css")
+	templateCss, _ := os.ReadFile("./template/style.css")
 	titlePlaceholder := []byte("||PAGE_TITLE||")
+	normalizePlaceholder := []byte("||NORMALIZE_CSS||")
+	templatePlaceholder := []byte("||TEMPLATE_CSS||")
 
 	for _, item := range BuildConfigs {
 		log.Printf("Preparing to build config %s\n", item.ConfigName)
+		// At this point if we fail to load the include after all the sanity checking we've done
+		// then the file is just flat out missing, nothing we can do about that. Skip and move on
 		content, err := os.ReadFile(path.Join("./includes", item.ContentPath))
 		if err != nil {
-			panic(err)
+			log.Printf("Failed to load include '%s' for config: '%s'", item.ContentPath, item.ConfigName)
+			continue
 		}
 
 		// Header has dynamic replacements, will load each time to avoid mutable state
 		header, _ := os.ReadFile("./template/header.html")
 		header = bytes.Replace(header, titlePlaceholder, []byte(item.Title), -1)
+		header = bytes.Replace(header, normalizePlaceholder, normalize, -1)
+		header = bytes.Replace(header, templatePlaceholder, templateCss, -1)
 
 		html := markdown.ToHTML(content, nil, nil)
 
@@ -114,5 +123,4 @@ func main() {
 
 		log.Printf("Successfully built config %s\n", item.ConfigName)
 	}
-
 }
