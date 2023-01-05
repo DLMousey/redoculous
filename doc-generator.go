@@ -24,14 +24,7 @@ type BuildConfig struct {
 	ConfigName  string `yaml:"configName"`
 }
 
-type BuildIndexItem struct {
-	ConfigPath string `json:"config_path"`
-	Title      string `json:"title"`
-	Category   string `json:"category"`
-}
-
 func main() {
-
 	// Nuke build/
 	err := os.RemoveAll(path.Join("./build"))
 	if err != nil {
