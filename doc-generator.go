@@ -78,13 +78,11 @@ func main() {
 		BuildConfigs = append(BuildConfigs, config)
 	}
 
-	// Build
+	// Commence build process
 	footer, _ := os.ReadFile("./template/footer.html")
 	normalize, _ := os.ReadFile("./template/normalize.css")
 	templateCss, _ := os.ReadFile("./template/style.css")
 	titlePlaceholder := []byte("||PAGE_TITLE||")
-	normalizePlaceholder := []byte("||NORMALIZE_CSS||")
-	templatePlaceholder := []byte("||TEMPLATE_CSS||")
 
 	for _, item := range BuildConfigs {
 		log.Printf("Preparing to build config %s\n", item.ConfigName)
@@ -99,17 +97,26 @@ func main() {
 		// Header has dynamic replacements, will load each time to avoid mutable state
 		header, _ := os.ReadFile("./template/header.html")
 		header = bytes.Replace(header, titlePlaceholder, []byte(item.Title), -1)
-		header = bytes.Replace(header, normalizePlaceholder, normalize, -1)
-		header = bytes.Replace(header, templatePlaceholder, templateCss, -1)
 
 		html := markdown.ToHTML(content, nil, nil)
 
 		parts := strings.Split(item.ConfigName, ".")
-		outputName := parts[:len(parts)-1][0] + ".html"
-		outputFile := fmt.Sprintf("./build/%s", outputName)
-		outputContent := [][]byte{header, html, footer}
+		outputName := parts[:len(parts)-1][0]
 
-		err = os.WriteFile(outputFile, bytes.Join(outputContent, nil), 0755)
+		// create directory for each config so css file can be copied in
+		err = os.Mkdir("./build/"+outputName, 0755)
+		if err != nil {
+			return
+		}
+
+		outputHtml := fmt.Sprintf("./build/%s/index.html", outputName)
+		outputCss := fmt.Sprintf("./build/%s/style.css", outputName)
+		outputContent := [][]byte{header, html, footer}
+		outputCssContent := [][]byte{normalize, templateCss}
+
+		err = os.WriteFile(outputHtml, bytes.Join(outputContent, nil), 0755)
+		err = os.WriteFile(outputCss, bytes.Join(outputCssContent, nil), 0755)
+
 		if err != nil {
 			log.Fatalln(err)
 		}
